@@ -1,0 +1,110 @@
+{% extends 'nav.html' %}
+<!--   NavBar Start-->
+
+<!--   NavBar End-->
+
+
+{% block content %}
+        <hr>
+<div class="container pt-4">
+
+    <div class="row  p-0 mt-4 ">
+
+
+<div class="col-lg-4 mx-auto shadow p-0 ">
+  <div class="alert alert-info">
+   <h2>Add New ToDo</h2>
+
+  </div>
+  <div class=" p-4">
+  <form action="{% url 'add_todo' %}" method="post">
+  {% csrf_token %}
+
+  {{form.as_p}}
+  <input  class="btn btn-primary" type="submit" value="ADD">
+
+</form>
+
+</div>
+</div>
+
+
+
+
+        <div class="col">
+            <div class="border">
+
+                <div>
+                 {% if todos|length == 0 %}
+                        <div class="alert alert - info">
+                            <p class="" style="font-size : 30px;" >No Todos</p>
+
+                        </div>
+
+                    {% else %}
+
+                       <table class="table" >
+                        <thead >
+                        <tr>
+                            <th>#</th>
+                              <th>Title</th>
+                              <th>Status</th>
+                            <th>priority</th>
+                            <th>Action</th>
+
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                         {% for todo in todos %}
+<tr>
+                            <td>{{forloop.counter}}</td>
+                               <td>{{todo.title}}</td>
+                               <td>
+
+
+    {% if todo.status == 'C' %}
+        ✅
+    {% else %}
+        🕙
+    {% endif %}
+
+                               </td>
+                               <td>{{todo.priority}}</td>
+                               <td>
+    <a href="{% url 'delete' todo.id %}" title="Delete" class="btn btn-danger">Delete</a>
+    {% if todo.status == 'P' %}
+        <a href="{% url 'change-status' todo.id 'C' %}" title="Complete" class="">✅</a>
+    {% else %}
+        <a href="{% url 'change-status' todo.id 'P' %}" title="Mark Pending" class="">🕙</a>
+    {% endif %}
+</td>
+
+
+</tr>
+
+
+
+                        {%endfor%}
+
+                        </tbody>
+
+
+
+                    </table>
+
+
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+
+    {% endblock  %}
+
+

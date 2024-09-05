@@ -1,0 +1,28 @@
+
+{% extends 'nav.html' %}
+<!--   NavBar Start-->
+
+<!--   NavBar End-->
+
+
+{% block content %}
+    <div class="col-lg-5 shadow p-4 mx-auto">
+    <div class="alert alert-success">Create Account </div>
+    <div class="p-0">
+        <form method="post" action="{% url 'signup' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <br>
+            <input class="btn btn-primary" type="submit" value="Create Account">
+        </form>
+    </div>
+</div>
+
+
+    {% endblock  %}
+
+
+
+
+
+
