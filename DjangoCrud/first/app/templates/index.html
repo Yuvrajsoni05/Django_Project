@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product CRUD</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4">Product Management</h1>
+
+        <!-- Add Product Form -->
+        <div class="mb-4">
+            <h3>Add New Product</h3>
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" id="product_id" name="product_id" value="">
+                <div class="form-group">
+                    <label for="name">Product Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="details">Product Details:</label>
+                    <textarea class="form-control" id="details" name="details" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="quality">Quality:</label>
+                    <input type="text" class="form-control" id="quality" name="quality" required>
+                </div>
+                <div class="form-group">
+                    <label for="product_type">Product Type:</label>
+                    <select class="form-control" id="product_type" name="product_type">
+                        <option value="gold">Gold</option>
+                        <option value="silver">Silver</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" min="1">
+                </div>
+                <div class="form-group">
+                    <label for="price">Price:</label>
+                    <input type="number" class="form-control" id="price" name="price" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="manufacture_date">Manufacture Date:</label>
+                    <input type="date" class="form-control" id="manufacture_date" name="manufacture_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="available">Available:</label>
+                    <input type="checkbox" id="available" name="available">
+                </div>
+                <div class="form-group">
+                    <label for="rating">Rating:</label>
+                    <input type="number" class="form-control" id="rating" name="rating" min="1" max="5">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Product</button>
+            </form>
+        </div>
+
+        <!-- Search Form -->
+        <form method="get" action="">
+            <div class="form-group">
+                <input type="text" class="form-control" name="search" placeholder="Search by name" value="{{ request.GET.search }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <!-- Product Table -->
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Details</th>
+                    <th>Quality</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Manufacture Date</th>
+                    <th>Available</th>
+                    <th>Rating</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.details }}</td>
+                        <td>{{ product.quality }}</td>
+                        <td>{{ product.product_type }}</td>
+                        <td>{{ product.quantity }}</td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.manufacture_date }}</td>
+                        <td>{{ product.available }}</td>
+                        <td>{{ product.rating }}</td>
+                        <td>
+                            <!-- Edit Button -->
+                            <a href="#editModal{{ product.id }}" class="btn btn-info" data-toggle="modal">Edit</a>
+                            <!-- Delete Form -->
+                            <form method="post" action="" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="delete_id" value="{{ product.id }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Edit Modals -->
+    {% for product in products %}
+    <div class="modal fade" id="editModal{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ product.id }}" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel{{ product.id }}">Edit Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <input type="hidden" id="product_id" name="product_id" value="{{ product.id }}">
+                        <div class="form-group">
+                            <label for="name">Product Name:</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="details">Product Details:</label>
+                            <textarea class="form-control" id="details" name="details" required>{{ product.details }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="quality">Quality:</label>
+                            <input type="text" class="form-control" id="quality" name="quality" value="{{ product.quality }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product_type">Product Type:</label>
+                            <select class="form-control" id="product_type" name="product_type">
+                                <option value="gold" {% if product.product_type == 'gold' %}selected{% endif %}>Gold</option>
+                                <option value="silver" {% if product.product_type == 'silver' %}selected{% endif %}>Silver</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" value="{{ product.quantity }}" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price:</label>
+                            <input type="number" class="form-control" id="price" name="price" value="{{ product.price }}" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="manufacture_date">Manufacture Date:</label>
+                            <input type="date" class="form-control" id="manufacture_date" name="manufacture_date" value="{{ product.manufacture_date }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="available">Available:</label>
+                            <input type="checkbox" id="available" name="available" {% if product.available %}checked{% endif %}>
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">Rating:</label>
+                            <input type="number" class="form-control" id="rating" name="rating" value="{{ product.rating }}" min="1" max="5">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Bootstrap Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
